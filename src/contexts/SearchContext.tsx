@@ -35,7 +35,7 @@ interface SearchResultType {
   jobs: JobListingType[];
   num_paginable_jobs: number;
   success: boolean;
-  totalJobs: number;
+  total_jobs: number;
 }
 
 interface SearchContextState {
@@ -49,8 +49,10 @@ interface SearchContextState {
   setRadius: (radius: number) => void;
   jobType: string;
   setJobType: (jobType: string) => void;
-  jobListings: SearchResultType;
+  jobListings: SearchResultType | null;
   setJobListings: (searchResult: SearchResultType) => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
 }
 
 export const SearchContext = React.createContext<SearchContextState>({
@@ -64,13 +66,10 @@ export const SearchContext = React.createContext<SearchContextState>({
   setRadius: () => {},
   jobType: "",
   setJobType: () => {},
-  jobListings: {
-    jobs: [],
-    num_paginable_jobs: 0,
-    success: false,
-    totalJobs: 0,
-  },
+  jobListings: null,
   setJobListings: () => {},
+  isLoading: false,
+  setIsLoading: () => {},
 });
 
 export const useSearchContext = () =>
@@ -81,17 +80,15 @@ interface Props {
 }
 
 export function SearchContextController({ children }: Props) {
+  const [isLoading, setIsLoading] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [location, setLocation] = React.useState("");
   const [timePosted, setTimePosted] = React.useState("");
   const [radius, setRadius] = React.useState(0);
   const [jobType, setJobType] = React.useState("");
-  const [jobListings, setJobListings] = React.useState<SearchResultType>({
-    jobs: [],
-    num_paginable_jobs: 0,
-    success: false,
-    totalJobs: 0,
-  });
+  const [jobListings, setJobListings] = React.useState<SearchResultType | null>(
+    null
+  );
 
   const value = React.useMemo(
     () => ({
@@ -107,6 +104,8 @@ export function SearchContextController({ children }: Props) {
       setJobType,
       jobListings,
       setJobListings,
+      isLoading,
+      setIsLoading,
     }),
     [
       searchTerm,
@@ -121,6 +120,8 @@ export function SearchContextController({ children }: Props) {
       setJobType,
       jobListings,
       setJobListings,
+      isLoading,
+      setIsLoading,
     ]
   );
 

@@ -7,7 +7,7 @@ export default function JobListingDetails() {
   const { selectedJobListing } = useJobListingContext();
   const { jobListings } = useSearchContext();
   const job = React.useMemo(() => {
-    return jobListings.jobs.find((job) => job.id === selectedJobListing);
+    return jobListings?.jobs.find((job) => job.id === selectedJobListing);
   }, [selectedJobListing, jobListings]);
   return (
     <div>

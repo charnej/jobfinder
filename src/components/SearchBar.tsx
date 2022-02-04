@@ -12,13 +12,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import logo from "../assests/JobFinder.png";
-import { StyledTextField } from "./TextFields";
 import { useSearchContext } from "../contexts/SearchContext";
-const Toolbar = styled(MuiToolbar)(({ theme }) => ({
-  alignItems: "flex-start",
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(2),
-}));
 
 export default function SearchBar() {
   const {
@@ -32,11 +26,28 @@ export default function SearchBar() {
     setRadius,
     timePosted,
     setTimePosted,
+    setIsLoading,
   } = useSearchContext();
 
-  const [error, setError] = React.useState(null);
-  const [isLoaded, setIsLoaded] = React.useState(false);
   const apiKey = "mthpyw9ea7zyswfuj3zur6bt55fce7qf";
+
+  const fetchJobs = React.useCallback(() => {
+    setIsLoading(true);
+    fetch(`https://api.ziprecruiter.com/jobs/v1?
+    search=${searchTerm}&location=${location}&radius_miles=${radius}&days_ago=${timePosted}&jobs_per_page=10&page=1&api_key=${apiKey}`)
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setIsLoading(false);
+          setJobListings(result);
+        },
+        (error) => {
+          console.log("error");
+          setIsLoading(false);
+          // setError(error);
+        }
+      );
+  }, [searchTerm, location, radius, timePosted]);
 
   return (
     <>
@@ -56,7 +67,7 @@ export default function SearchBar() {
           <Grid item xs={12} md={10} lg={10}>
             <Box mx={5} display="flex" alignItems="center" flexWrap="wrap">
               <Grid item xs={12} md={4}>
-                <StyledTextField
+                <TextField
                   fullWidth
                   variant="standard"
                   InputProps={{
@@ -87,19 +98,7 @@ export default function SearchBar() {
                     variant="contained"
                     sx={{ color: "common.white", textTransform: "capitalize" }}
                     onClick={() => {
-                      fetch(`https://api.ziprecruiter.com/jobs/v1?
-    search=${searchTerm}&location=${location}&radius_miles=${radius}&days_ago=${timePosted}&jobs_per_page=10&page=1&api_key=${apiKey}`)
-                        .then((res) => res.json())
-                        .then(
-                          (result) => {
-                            setIsLoaded(true);
-                            setJobListings(result);
-                          },
-                          (error) => {
-                            setIsLoaded(true);
-                            setError(error);
-                          }
-                        );
+                      fetchJobs();
                     }}
                   >
                     Find jobs
