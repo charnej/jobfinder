@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Divider,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import { useJobListingContext } from "../contexts/JobListingContext";
 import { Box } from "@mui/system";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
@@ -29,26 +22,21 @@ export default function JobListingCard({
   timePosted,
   salary,
 }: Props) {
-  const { setSelectedJobListing } = useJobListingContext();
+  const { setSelectedJobListing, selectedJobListing } = useJobListingContext();
   return (
-    // <Card
-    //   sx={{ margin: 1 }}
-    //   onClick={() => {
-    //     setSelectedJobListing(jobId);
-    //   }}
-    // >
-    //   <CardHeader
-    //     title={jobTitle}
-    //     subheader={hiringCompanyName}
-    //     sx={{ textAlign: "center" }}
-    //   />
-    //   <CardContent>
-    //     <Typography>{location}</Typography>
-    //     <Typography>{jobSnippet}</Typography>
-    //     <Typography>{timePosted}</Typography>
-    //   </CardContent>
-    // </Card>
-    <Paper elevation={3} sx={{ margin: 1, padding: 2 }}>
+    <Paper
+      elevation={3}
+      sx={{
+        mb: 1,
+        padding: 2,
+        cursor: "pointer",
+        border: jobId === selectedJobListing ? "2px solid #2CCA9A" : "none",
+        borderRadius: "5px",
+      }}
+      onClick={() => {
+        setSelectedJobListing(jobId);
+      }}
+    >
       <Box display="flex" flexDirection="column" justifyContent="flex-start">
         <Typography variant="h5" align="left" fontWeight="bold">
           {jobTitle}

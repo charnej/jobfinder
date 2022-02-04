@@ -3,6 +3,7 @@ import {
   AppBar,
   Box,
   Button,
+  Container,
   Divider,
   Grid,
   TextField,
@@ -12,6 +13,7 @@ import {
 import { styled } from "@mui/material/styles";
 import logo from "../assests/JobFinder.png";
 import { StyledTextField } from "./TextFields";
+import { useSearchContext } from "../contexts/SearchContext";
 const Toolbar = styled(MuiToolbar)(({ theme }) => ({
   alignItems: "flex-start",
   paddingTop: theme.spacing(1),
@@ -19,41 +21,143 @@ const Toolbar = styled(MuiToolbar)(({ theme }) => ({
 }));
 
 export default function SearchBar() {
-  return (
-    <AppBar position="static" sx={{ backgroundColor: "white" }}>
-      <Grid container sx={{ p: 1, display: "flex", alignItems: "center" }}>
-        <Grid item xs={1}>
-          <img
-            src={logo}
-            alt="job finder logo"
-            style={{ width: "100%", height: "auto" }}
-          />
-        </Grid>
-        <Grid item xs={11}>
-          <Box pl={8} display="flex" alignItems="center">
-            <StyledTextField fullWidth variant="filled" placeholder="Search" />
-            <TextField fullWidth variant="filled" placeholder="location" />
-            <Box pl={2}>
-              <Button variant="contained">Find jobs</Button>
-            </Box>
-          </Box>
-        </Grid>
-      </Grid>
+  const {
+    jobListings,
+    setJobListings,
+    searchTerm,
+    setSearchTerm,
+    location,
+    setLocation,
+    radius,
+    setRadius,
+    timePosted,
+    setTimePosted,
+  } = useSearchContext();
 
-      <Divider sx={{ backgroundColor: "black" }} />
-      <Grid
-        container
-        sx={{ p: 1, display: "flex", justifyContent: "flex-start" }}
-      >
-        <Grid item xs={1}></Grid>
-        <Grid item xs={11}>
-          <Box pl={8} display="flex" alignItems="center">
-            <TextField variant="filled" placeholder="Posted time" />
-            <TextField variant="filled" placeholder="within 5 km" />
-            <TextField variant="filled" placeholder="job type" />
-          </Box>
+  const [error, setError] = React.useState(null);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const apiKey = "mthpyw9ea7zyswfuj3zur6bt55fce7qf";
+
+  return (
+    <>
+      <AppBar position="static" sx={{ backgroundColor: "white" }}>
+        <Grid
+          container
+          spacing={2}
+          sx={{ p: 1, display: "flex", alignItems: "center" }}
+        >
+          <Grid item xs={12} md={2} lg={2}>
+            <img
+              src={logo}
+              alt="job finder logo"
+              style={{ width: "100%", height: "auto" }}
+            />
+          </Grid>
+          <Grid item xs={12} md={10} lg={10}>
+            <Box mx={5} display="flex" alignItems="center" flexWrap="wrap">
+              <Grid item xs={12} md={4}>
+                <StyledTextField
+                  fullWidth
+                  variant="standard"
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
+                  placeholder="Search"
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  variant="standard"
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
+                  placeholder="location"
+                  onChange={(e) => {
+                    setLocation(e.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Box pl={2}>
+                  <Button
+                    variant="contained"
+                    sx={{ color: "common.white", textTransform: "capitalize" }}
+                    onClick={() => {
+                      fetch(`https://api.ziprecruiter.com/jobs/v1?
+    search=${searchTerm}&location=${location}&radius_miles=${radius}&days_ago=${timePosted}&jobs_per_page=10&page=1&api_key=${apiKey}`)
+                        .then((res) => res.json())
+                        .then(
+                          (result) => {
+                            setIsLoaded(true);
+                            setJobListings(result);
+                          },
+                          (error) => {
+                            setIsLoaded(true);
+                            setError(error);
+                          }
+                        );
+                    }}
+                  >
+                    Find jobs
+                  </Button>
+                </Box>
+              </Grid>
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </AppBar>
+      </AppBar>
+
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Box>
+          <Grid
+            container
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              backgroundColor: "common.white",
+              borderRadius: "5px",
+            }}
+          >
+            <Grid item xs={12} md={4}>
+              <TextField
+                variant="standard"
+                placeholder="Posted time"
+                InputProps={{
+                  disableUnderline: true,
+                }}
+                onChange={(e) => {
+                  setTimePosted(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                variant="standard"
+                placeholder="within 5 km"
+                InputProps={{
+                  disableUnderline: true,
+                }}
+                onChange={(e) => {
+                  setRadius(parseInt(e.target.value));
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                placeholder="job type"
+                variant="standard"
+                InputProps={{
+                  disableUnderline: true,
+                }}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+      </Container>
+    </>
   );
 }
