@@ -11,7 +11,7 @@ import {
 import logo from "../assets/JobFinder.png";
 import { useSearchContext } from "../contexts/SearchContext";
 import { useJobListingContext } from "../contexts/JobListingContext";
-import { fetchJobs3 } from "../helpers/FetchJobs";
+import { fetchJobs3, fetchJobs4 } from "../helpers/FetchJobs";
 
 const timePostedOptions = [
   {
@@ -112,6 +112,25 @@ export default function SearchBar() {
   //     );
   // }, [searchTerm, location, radius, timePosted]);
 
+  // React.useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const response = await fetchJobs4(
+  //         searchTerm,
+  //         location,
+  //         radius,
+  //         timePosted,
+  //         currentPage,
+  //         apiKey
+  //       );
+  //       console.log(response);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   }
+  //   fetchData();
+  // }, [searchTerm, location, radius, timePosted, currentPage, apiKey]);
+
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: "white" }}>
@@ -131,6 +150,7 @@ export default function SearchBar() {
             <Box mx={5} display="flex" alignItems="center" flexWrap="wrap">
               <Grid item xs={12} md={4}>
                 <TextField
+                  data-testid="searchTerm"
                   fullWidth
                   variant="standard"
                   InputProps={{
@@ -144,6 +164,7 @@ export default function SearchBar() {
               </Grid>
               <Grid item xs={12} md={4}>
                 <TextField
+                  data-testid="location"
                   fullWidth
                   variant="standard"
                   InputProps={{
@@ -159,21 +180,40 @@ export default function SearchBar() {
                 <Box pl={2}>
                   <Button
                     variant="contained"
+                    data-testid="findJobsButton"
                     sx={{ color: "common.white", textTransform: "capitalize" }}
-                    onClick={() => {
+                    onClick={async () => {
                       setSelectedJobListing(null);
                       setCurrentPage(1);
-                      fetchJobs3(
-                        searchTerm,
-                        location,
-                        radius,
-                        timePosted,
-                        currentPage,
-                        apiKey,
-                        setIsLoading,
-                        setError,
-                        setJobListings
-                      );
+                      // fetchJobs3(
+                      //   searchTerm,
+                      //   location,
+                      //   radius,
+                      //   timePosted,
+                      //   currentPage,
+                      //   apiKey,
+                      //   setIsLoading,
+                      //   setError,
+                      //   setJobListings
+                      // );
+                      setIsLoading(true);
+                      try {
+                        const response = await fetchJobs4(
+                          searchTerm,
+                          location,
+                          radius,
+                          timePosted,
+                          currentPage,
+                          apiKey
+                        );
+                        if (response) {
+                          setJobListings(response);
+                        }
+                      } catch (error) {
+                        setError(true);
+                      } finally {
+                        setIsLoading(false);
+                      }
                     }}
                   >
                     Find jobs
@@ -198,28 +238,47 @@ export default function SearchBar() {
           >
             <Grid item xs={12} md={4}>
               <TextField
+                data-testid="datePosted"
                 select
                 variant="standard"
                 placeholder="Date posted"
                 InputProps={{
                   disableUnderline: true,
                 }}
-                onChange={(e) => {
+                onChange={async (e) => {
                   setTimePosted(parseInt(e.target.value));
                   // fetchJobs();
                   setCurrentPage(1);
-                  fetchJobs3(
-                    searchTerm,
-                    location,
-                    radius,
-                    parseInt(e.target.value),
-                    currentPage,
-                    apiKey,
-                    setIsLoading,
-                    setError,
-                    setJobListings
-                  );
+                  // fetchJobs3(
+                  //   searchTerm,
+                  //   location,
+                  //   radius,
+                  //   parseInt(e.target.value),
+                  //   currentPage,
+                  //   apiKey,
+                  //   setIsLoading,
+                  //   setError,
+                  //   setJobListings
+                  // );
                   // fetchJobs2();
+                  setIsLoading(true);
+                  try {
+                    const response = await fetchJobs4(
+                      searchTerm,
+                      location,
+                      radius,
+                      timePosted,
+                      currentPage,
+                      apiKey
+                    );
+                    if (response) {
+                      setJobListings(response);
+                    }
+                  } catch (error) {
+                    setError(true);
+                  } finally {
+                    setIsLoading(false);
+                  }
                 }}
                 defaultValue={0}
               >
@@ -234,6 +293,7 @@ export default function SearchBar() {
             </Grid>
             <Grid item xs={12} md={4}>
               <TextField
+                data-testid="radius"
                 select
                 variant="standard"
                 placeholder="within 5 miles"

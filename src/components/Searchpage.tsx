@@ -52,7 +52,7 @@ export default function SearchPage() {
     value: number
   ) => {
     setCurrentPage(value);
-    console.log(currentPage, value);
+
     fetchJobs3(
       searchTerm,
       location,
@@ -66,7 +66,7 @@ export default function SearchPage() {
     );
   };
   const isMobile = window.innerWidth >= 320 && window.innerWidth <= 480;
-  console.log(height, width, isMobile);
+
   return (
     <Box height="100vh">
       <Box>
@@ -92,6 +92,8 @@ export default function SearchPage() {
         >
           {isLoading && (
             <Box
+              data-testid="loadingSpinner"
+              id="loadingSpinner"
               mt={2}
               display="flex"
               alignItems="center"
