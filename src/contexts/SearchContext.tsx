@@ -31,7 +31,7 @@ export interface JobListingType {
   };
 }
 
-interface SearchResultType {
+export interface SearchResultType {
   jobs: JobListingType[];
   num_paginable_jobs: number;
   success: boolean;
@@ -43,8 +43,8 @@ interface SearchContextState {
   setSearchTerm: (searchTerm: string) => void;
   location: string;
   setLocation: (location: string) => void;
-  timePosted: string;
-  setTimePosted: (timePosted: string) => void;
+  timePosted: number;
+  setTimePosted: (timePosted: number) => void;
   radius: number;
   setRadius: (radius: number) => void;
   jobType: string;
@@ -53,6 +53,10 @@ interface SearchContextState {
   setJobListings: (searchResult: SearchResultType) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  error: boolean;
+  setError: (error: boolean) => void;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
 export const SearchContext = React.createContext<SearchContextState>({
@@ -60,9 +64,9 @@ export const SearchContext = React.createContext<SearchContextState>({
   setSearchTerm: () => {},
   location: "",
   setLocation: () => {},
-  timePosted: "",
+  timePosted: 0,
   setTimePosted: () => {},
-  radius: 0,
+  radius: 10,
   setRadius: () => {},
   jobType: "",
   setJobType: () => {},
@@ -70,6 +74,10 @@ export const SearchContext = React.createContext<SearchContextState>({
   setJobListings: () => {},
   isLoading: false,
   setIsLoading: () => {},
+  error: false,
+  setError: () => {},
+  currentPage: 1,
+  setCurrentPage: () => {},
 });
 
 export const useSearchContext = () =>
@@ -80,11 +88,13 @@ interface Props {
 }
 
 export function SearchContextController({ children }: Props) {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [error, setError] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [location, setLocation] = React.useState("");
-  const [timePosted, setTimePosted] = React.useState("");
-  const [radius, setRadius] = React.useState(0);
+  const [timePosted, setTimePosted] = React.useState(0);
+  const [radius, setRadius] = React.useState(5);
   const [jobType, setJobType] = React.useState("");
   const [jobListings, setJobListings] = React.useState<SearchResultType | null>(
     null
@@ -106,6 +116,10 @@ export function SearchContextController({ children }: Props) {
       setJobListings,
       isLoading,
       setIsLoading,
+      error,
+      setError,
+      currentPage,
+      setCurrentPage,
     }),
     [
       searchTerm,
@@ -122,6 +136,10 @@ export function SearchContextController({ children }: Props) {
       setJobListings,
       isLoading,
       setIsLoading,
+      error,
+      setError,
+      currentPage,
+      setCurrentPage,
     ]
   );
 

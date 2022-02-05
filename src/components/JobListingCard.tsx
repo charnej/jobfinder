@@ -3,6 +3,7 @@ import { Paper, Typography } from "@mui/material";
 import { useJobListingContext } from "../contexts/JobListingContext";
 import { Box } from "@mui/system";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
+import parse from "html-react-parser";
 
 interface Props {
   jobId: string;
@@ -12,6 +13,7 @@ interface Props {
   jobSnippet: string;
   timePosted: string;
   salary: string | null;
+  isMobile: boolean;
 }
 export default function JobListingCard({
   jobId,
@@ -21,8 +23,13 @@ export default function JobListingCard({
   jobSnippet,
   timePosted,
   salary,
+  isMobile,
 }: Props) {
-  const { setSelectedJobListing, selectedJobListing } = useJobListingContext();
+  const {
+    setSelectedJobListing,
+    selectedJobListing,
+    setOpenJobListingDetails,
+  } = useJobListingContext();
   return (
     <Paper
       elevation={3}
@@ -35,6 +42,7 @@ export default function JobListingCard({
       }}
       onClick={() => {
         setSelectedJobListing(jobId);
+        isMobile && setOpenJobListingDetails(true);
       }}
     >
       <Box display="flex" flexDirection="column" justifyContent="flex-start">
@@ -57,7 +65,7 @@ export default function JobListingCard({
 
       <Box pt={1}>
         <Typography align="left">{location}</Typography>
-        <Typography align="left">{jobSnippet}</Typography>
+        <Typography align="left">{parse(jobSnippet)}</Typography>
       </Box>
       <Box pt={1} display="flex" alignItems="center">
         <AccessTimeFilledIcon fontSize="small" sx={{ color: "#458EF5" }} />

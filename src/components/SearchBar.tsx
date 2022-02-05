@@ -4,19 +4,75 @@ import {
   Box,
   Button,
   Container,
-  Divider,
   Grid,
+  MenuItem,
   TextField,
-  Toolbar as MuiToolbar,
-  Typography,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import logo from "../assests/JobFinder.png";
+import logo from "../assets/JobFinder.png";
 import { useSearchContext } from "../contexts/SearchContext";
+import { useJobListingContext } from "../contexts/JobListingContext";
+import { fetchJobs3 } from "../helpers/FetchJobs";
+
+const timePostedOptions = [
+  {
+    value: 0,
+    name: "Posted anytime",
+  },
+  {
+    value: 1,
+    name: "Last 24 hours",
+  },
+  {
+    value: 3,
+    name: "Last 3 days",
+  },
+  {
+    value: 7,
+    name: "Last 7 days",
+  },
+  {
+    value: 14,
+    name: "Last 14 days",
+  },
+  {
+    value: 30,
+    name: "Last month",
+  },
+];
+
+const radiusOptions = [
+  {
+    value: 5,
+    name: "Within 5 miles",
+  },
+  {
+    value: 10,
+    name: "Within 10 miles",
+  },
+  {
+    value: 15,
+    name: "Within 15 miles",
+  },
+  {
+    value: 20,
+    name: "Within 20 miles",
+  },
+  {
+    value: 25,
+    name: "Within 25 miles",
+  },
+  {
+    value: 50,
+    name: "Within 50 miles",
+  },
+  {
+    value: 100,
+    name: "Within 100 miles",
+  },
+];
 
 export default function SearchBar() {
   const {
-    jobListings,
     setJobListings,
     searchTerm,
     setSearchTerm,
@@ -27,27 +83,34 @@ export default function SearchBar() {
     timePosted,
     setTimePosted,
     setIsLoading,
+    setError,
+    currentPage,
+    setCurrentPage,
   } = useSearchContext();
+
+  const { setSelectedJobListing } = useJobListingContext();
 
   const apiKey = "mthpyw9ea7zyswfuj3zur6bt55fce7qf";
 
-  const fetchJobs = React.useCallback(() => {
-    setIsLoading(true);
-    fetch(`https://api.ziprecruiter.com/jobs/v1?
-    search=${searchTerm}&location=${location}&radius_miles=${radius}&days_ago=${timePosted}&jobs_per_page=10&page=1&api_key=${apiKey}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoading(false);
-          setJobListings(result);
-        },
-        (error) => {
-          console.log("error");
-          setIsLoading(false);
-          // setError(error);
-        }
-      );
-  }, [searchTerm, location, radius, timePosted]);
+  // const fetchJobs = React.useCallback(() => {
+  //   setIsLoading(true);
+  //   setError(false);
+  //   fetch(
+  //     `https://api.ziprecruiter.com/jobs/v1?search=${searchTerm}&location=${location}&radius_miles=${radius}&days_ago=${timePosted}&jobs_per_page=10&page=${currentPage}&api_key=${apiKey}`
+  //   )
+  //     .then((res) => res.json())
+  //     .then(
+  //       (result) => {
+  //         setIsLoading(false);
+  //         setJobListings(result);
+  //       },
+  //       (error) => {
+  //         console.log("error");
+  //         setIsLoading(false);
+  //         setError(error);
+  //       }
+  //     );
+  // }, [searchTerm, location, radius, timePosted]);
 
   return (
     <>
@@ -98,7 +161,19 @@ export default function SearchBar() {
                     variant="contained"
                     sx={{ color: "common.white", textTransform: "capitalize" }}
                     onClick={() => {
-                      fetchJobs();
+                      setSelectedJobListing(null);
+                      setCurrentPage(1);
+                      fetchJobs3(
+                        searchTerm,
+                        location,
+                        radius,
+                        timePosted,
+                        currentPage,
+                        apiKey,
+                        setIsLoading,
+                        setError,
+                        setJobListings
+                      );
                     }}
                   >
                     Find jobs
@@ -123,29 +198,77 @@ export default function SearchBar() {
           >
             <Grid item xs={12} md={4}>
               <TextField
+                select
                 variant="standard"
-                placeholder="Posted time"
+                placeholder="Date posted"
                 InputProps={{
                   disableUnderline: true,
                 }}
                 onChange={(e) => {
-                  setTimePosted(e.target.value);
+                  setTimePosted(parseInt(e.target.value));
+                  // fetchJobs();
+                  setCurrentPage(1);
+                  fetchJobs3(
+                    searchTerm,
+                    location,
+                    radius,
+                    parseInt(e.target.value),
+                    currentPage,
+                    apiKey,
+                    setIsLoading,
+                    setError,
+                    setJobListings
+                  );
+                  // fetchJobs2();
                 }}
-              />
+                defaultValue={0}
+              >
+                {timePostedOptions.map((option) => {
+                  return (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.name}
+                    </MenuItem>
+                  );
+                })}
+              </TextField>
             </Grid>
             <Grid item xs={12} md={4}>
               <TextField
+                select
                 variant="standard"
-                placeholder="within 5 km"
+                placeholder="within 5 miles"
                 InputProps={{
                   disableUnderline: true,
                 }}
                 onChange={(e) => {
                   setRadius(parseInt(e.target.value));
+                  setCurrentPage(1);
+                  fetchJobs3(
+                    searchTerm,
+                    location,
+                    parseInt(e.target.value),
+                    timePosted,
+                    currentPage,
+                    apiKey,
+                    setIsLoading,
+                    setError,
+                    setJobListings
+                  );
+                  // fetchJobs();
+                  // fetchJobs2();
                 }}
-              />
+                defaultValue={5}
+              >
+                {radiusOptions.map((option) => {
+                  return (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.name}
+                    </MenuItem>
+                  );
+                })}
+              </TextField>
             </Grid>
-            <Grid item xs={12} md={4}>
+            {/* <Grid item xs={12} md={4}>
               <TextField
                 placeholder="job type"
                 variant="standard"
@@ -153,7 +276,7 @@ export default function SearchBar() {
                   disableUnderline: true,
                 }}
               />
-            </Grid>
+            </Grid> */}
           </Grid>
         </Box>
       </Container>

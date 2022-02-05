@@ -1,13 +1,21 @@
 import * as React from "react";
 
 interface JobListingContextState {
-  selectedJobListing: string;
-  setSelectedJobListing: (jobListing: string) => void;
+  selectedJobListing: string | null;
+  setSelectedJobListing: (jobListing: string | null) => void;
+  openJobListingDetails: boolean;
+  setOpenJobListingDetails: (open: boolean) => void;
+  jobListingNode: JSX.Element | null;
+  setJobListingNode: (element: JSX.Element | null) => void;
 }
 
 export const JobListingContext = React.createContext<JobListingContextState>({
-  selectedJobListing: "",
+  selectedJobListing: null,
   setSelectedJobListing: () => {},
+  jobListingNode: null,
+  setJobListingNode: () => {},
+  openJobListingDetails: false,
+  setOpenJobListingDetails: () => {},
 });
 
 export const useJobListingContext = () =>
@@ -18,14 +26,30 @@ interface Props {
 }
 
 export function JobListingContextController({ children }: Props) {
-  const [selectedJobListing, setSelectedJobListing] = React.useState("");
-
+  const [openJobListingDetails, setOpenJobListingDetails] =
+    React.useState(false);
+  const [selectedJobListing, setSelectedJobListing] = React.useState<
+    string | null
+  >(null);
+  const [jobListingNode, setJobListingNode] =
+    React.useState<JSX.Element | null>(null);
   const value = React.useMemo(
     () => ({
       selectedJobListing,
       setSelectedJobListing,
+      jobListingNode,
+      setJobListingNode,
+      openJobListingDetails,
+      setOpenJobListingDetails,
     }),
-    [selectedJobListing, setSelectedJobListing]
+    [
+      selectedJobListing,
+      setSelectedJobListing,
+      jobListingNode,
+      setJobListingNode,
+      openJobListingDetails,
+      setOpenJobListingDetails,
+    ]
   );
 
   return (
