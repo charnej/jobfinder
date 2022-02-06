@@ -1,55 +1,114 @@
-import {
-  findByTestId,
-  fireEvent,
-  getByTestId,
-  render,
-  screen,
-} from "@testing-library/react";
-import React from "react";
-import { JobListingContextController } from "../contexts/JobListingContext";
-import { SearchContextController } from "../contexts/SearchContext";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { JobListingType, SearchResultType } from "../contexts/SearchContext";
 import SearchBar from "./SearchBar";
+import * as data from "./../helpers/FetchJobs";
+import { fakeData } from "../helpers/mockedJobs";
 
-// it("should search for jobs", () => {
-//   const contextCallback = jest.fn();
-//   const { getAllByTestId } = render(
-//     <SearchContextController>
-//       <JobListingContextController>
-//         <SearchBar />
-//       </JobListingContextController>
-//     </SearchContextController>
-//   );
+describe("renders inputs", () => {
+  it("updates on change: search input", () => {
+    render(<SearchBar />);
 
-//   const submitButton = getAllByTestId("findJobsButton");
-//   fireEvent.click(submitButton[0]);
+    const field = screen.getByTestId("searchTerm").querySelector("input");
+    expect(field).toBeInTheDocument();
+    if (field) {
+      fireEvent.change(field, { target: { value: "google it" } });
+      expect(field.value).toBe("google it");
+    }
+  });
 
-//   expect(contextCallback.mock.calls[0]).to;
-// });
+  it("updates on change: location input", () => {
+    render(<SearchBar />);
 
-// it("should search for jobs", () => {
-//   const contextCallback = jest.fn();
-//   const { getByTestId } = render(
-//     <SearchContextController>
-//       <JobListingContextController>
-//         <SearchBar />
-//       </JobListingContextController>
-//     </SearchContextController>
-//   );
+    const field = screen.getByTestId("location").querySelector("input");
+    expect(field).toBeInTheDocument();
+    if (field) {
+      fireEvent.change(field, { target: { value: "google it" } });
+      expect(field.value).toBe("google it");
+    }
+  });
 
-//   const submitButton = getByTestId("findJobsButton");
-//   fireEvent.click(submitButton);
+  it("opens date posted select, and selects second value", () => {
+    const { getAllByRole, getByRole, container } = render(<SearchBar />);
 
-//   //   expect(contextCallback.mock.calls[0]).to;
-// });
+    // checks if the textfield div exists
+    let datePostedSelectTextField = container.querySelector(
+      "#datePostedSelectTextField"
+    ) as HTMLDivElement;
+    expect(datePostedSelectTextField).toBeInTheDocument();
 
-it("see if search textfield renders", () => {
-  const contextCallback = jest.fn();
-  const { getByTestId } = render(
-    <SearchContextController>
-      <JobListingContextController>
-        <SearchBar />
-      </JobListingContextController>
-    </SearchContextController>
-  );
-  expect(getByTestId("searchTerm")).toBeTruthy();
+    // checks if the input of the select exists, and if the value is 0 (default value)
+    let datePostedSelectInput = container.querySelector(
+      "#datePostedSelectInput"
+    ) as HTMLInputElement;
+    expect(datePostedSelectInput).toBeInTheDocument();
+    expect(datePostedSelectInput.value).toEqual("0");
+
+    // opens the select
+    fireEvent.mouseDown(datePostedSelectTextField);
+
+    // checks if there are options available
+    expect(getByRole("listbox")).not.toEqual(null);
+
+    // gets all the options, and selects the second one
+    act(() => {
+      const options = getAllByRole("option");
+      fireEvent.mouseDown(options[1]);
+      options[1].click();
+    });
+
+    // checks if the value is the selected option
+    datePostedSelectInput = container.querySelector(
+      "#datePostedSelectInput"
+    ) as HTMLInputElement;
+    expect(datePostedSelectInput.value).toEqual("1");
+  });
+
+  it("opens radius select, and selects second value", () => {
+    const { getAllByRole, getByRole, container } = render(<SearchBar />);
+
+    // checks if the textfield div exists
+    let radiusSelectTextField = container.querySelector(
+      "#radiusSelectTextField"
+    ) as HTMLDivElement;
+    expect(radiusSelectTextField).toBeInTheDocument();
+
+    // checks if the input of the select exists, and if the value is 5 (default value)
+    let radiusSelectInput = container.querySelector(
+      "#radiusSelectInput"
+    ) as HTMLInputElement;
+    expect(radiusSelectInput).toBeInTheDocument();
+    expect(radiusSelectInput.value).toEqual("5");
+
+    // opens the select
+    fireEvent.mouseDown(radiusSelectTextField);
+
+    // checks if there are options available
+    expect(getByRole("listbox")).not.toEqual(null);
+
+    // gets all the options, and selects the second one
+    act(() => {
+      const options = getAllByRole("option");
+      fireEvent.mouseDown(options[1]);
+      options[1].click();
+    });
+
+    // checks if the value is the selected option
+    radiusSelectInput = container.querySelector(
+      "#radiusSelectInput"
+    ) as HTMLInputElement;
+    expect(radiusSelectInput.value).toEqual("10");
+  });
+});
+
+describe("find jobs button", () => {
+  it("clicks the search button and calls FetchJobs once", () => {
+    render(<SearchBar />);
+    const mock = jest.spyOn(data, "fetchJobs4").mockResolvedValue(fakeData);
+
+    const findJobsButton = screen.getByTestId("findJobsButton");
+
+    fireEvent.click(findJobsButton);
+
+    expect(mock).toHaveBeenCalledTimes(1);
+  });
 });

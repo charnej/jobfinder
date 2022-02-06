@@ -156,6 +156,8 @@ export default function SearchBar() {
                   InputProps={{
                     disableUnderline: true,
                   }}
+                  id="Search"
+                  name="Search"
                   placeholder="Search"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -239,11 +241,15 @@ export default function SearchBar() {
             <Grid item xs={12} md={4}>
               <TextField
                 data-testid="datePosted"
+                id="datePostedSelectTextField"
                 select
                 variant="standard"
                 placeholder="Date posted"
                 InputProps={{
                   disableUnderline: true,
+                }}
+                inputProps={{
+                  id: "datePostedSelectInput",
                 }}
                 onChange={async (e) => {
                   setTimePosted(parseInt(e.target.value));
@@ -294,11 +300,15 @@ export default function SearchBar() {
             <Grid item xs={12} md={4}>
               <TextField
                 data-testid="radius"
+                id="radiusSelectTextField"
                 select
                 variant="standard"
                 placeholder="within 5 miles"
                 InputProps={{
                   disableUnderline: true,
+                }}
+                inputProps={{
+                  id: "radiusSelectInput",
                 }}
                 onChange={(e) => {
                   setRadius(parseInt(e.target.value));

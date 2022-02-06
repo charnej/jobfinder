@@ -32,6 +32,7 @@ export default function JobListingCard({
   } = useJobListingContext();
   return (
     <Paper
+      data-testid="jobListingCardWrapper"
       elevation={3}
       sx={{
         mb: 1,

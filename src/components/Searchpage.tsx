@@ -220,7 +220,7 @@ export default function SearchPage() {
                           ? `$${item.salary_min} - $${item.salary_max} ${item.salary_interval}`
                           : null;
                       return (
-                        <Box mr={1} key={item.id}>
+                        <Box mr={1} key={item.id} data-testid="jobListingCard">
                           <JobListingCard
                             jobId={item.id}
                             jobTitle={item.name}

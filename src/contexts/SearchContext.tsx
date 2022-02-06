@@ -13,7 +13,7 @@ export interface JobListingType {
   name: string;
   posted_time: string;
   posted_time_friendly: string;
-  salary_interval: number | null;
+  salary_interval: string | null;
   salary_max: number | null;
   salary_max_annual: number | null;
   salary_min: number | null;

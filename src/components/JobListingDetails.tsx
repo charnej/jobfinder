@@ -14,7 +14,7 @@ export default function JobListingDetails() {
     return null;
   }
   return (
-    <Box>
+    <Box data-testid="jobListingDetails">
       <Box m={1}>
         <Box p={1} sx={{ backgroundColor: "white" }}>
           <Typography align="left" variant="h6">
