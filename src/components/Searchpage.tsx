@@ -14,12 +14,13 @@ import SearchBar from "./SearchBar";
 import { useSearchContext } from "../contexts/SearchContext";
 import InformationPage from "./InformationPage";
 import { useWindowSize } from "../hooks/useWindowSize";
-import { fetchJobs3 } from "../helpers/FetchJobs";
+import { fetchJobs } from "../helpers/FetchJobs";
 import { useJobListingContext } from "../contexts/JobListingContext";
 import CloseIcon from "@mui/icons-material/Close";
 
 export default function SearchPage() {
-  const { height, width } = useWindowSize();
+  const { height } = useWindowSize();
+  const isMobile = window.innerWidth >= 320 && window.innerWidth <= 480;
   const {
     jobListings,
     isLoading,
@@ -45,27 +46,29 @@ export default function SearchPage() {
   const splitControlHeightRef: React.MutableRefObject<HTMLElement | null> =
     React.useRef<HTMLDivElement>(null);
 
-  const apiKey = "mthpyw9ea7zyswfuj3zur6bt55fce7qf";
-
-  const handlePageChange = (
+  const handlePageChange = async (
     _event: React.ChangeEvent<unknown>,
     value: number
   ) => {
     setCurrentPage(value);
-
-    fetchJobs3(
-      searchTerm,
-      location,
-      radius,
-      timePosted,
-      value,
-      apiKey,
-      setIsLoading,
-      setError,
-      setJobListings
-    );
+    setIsLoading(true);
+    try {
+      const response = await fetchJobs(
+        searchTerm,
+        location,
+        radius,
+        timePosted,
+        value
+      );
+      if (response) {
+        setJobListings(response);
+      }
+    } catch (error) {
+      setError(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
-  const isMobile = window.innerWidth >= 320 && window.innerWidth <= 480;
 
   return (
     <Box height="100vh">

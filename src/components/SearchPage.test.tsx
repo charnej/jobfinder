@@ -5,30 +5,7 @@ import { emptyJobsMockData, fakeData } from "../helpers/mockedJobs";
 import * as data from "./../helpers/FetchJobs";
 import { JobListingContextController } from "../contexts/JobListingContext";
 it("", () => {});
-// it("displays loading spinner", (done) => {
-//   render(
-//     <SearchContextController>
-//       <JobListingContextController>
-//         <SearchPage />
-//       </JobListingContextController>
-//     </SearchContextController>
-//   );
-
-//   const findJobsButton = screen.getByTestId("findJobsButton");
-
-//   act(() => {
-//     const mock = jest.spyOn(data, "fetchJobs4").mockResolvedValueOnce(fakeData);
-//     fireEvent.click(findJobsButton);
-//     done();
-//     expect(mock).toHaveBeenCalledTimes(1);
-//   });
-
-//   const jobListingCard = screen.getByTestId("loadingSpinner");
-
-//   expect(jobListingCard).toBeInTheDocument();
-// });
-
-it("displays loading spinner", async () => {
+it("displays loading spinner", (done) => {
   render(
     <SearchContextController>
       <JobListingContextController>
@@ -40,109 +17,107 @@ it("displays loading spinner", async () => {
   const findJobsButton = screen.getByTestId("findJobsButton");
 
   act(() => {
-    const mock = jest.spyOn(data, "fetchJobs4").mockResolvedValueOnce(fakeData);
+    const mock = jest.spyOn(data, "fetchJobs").mockResolvedValueOnce(fakeData);
+    fireEvent.click(findJobsButton);
+    done();
+    expect(mock).toHaveBeenCalledTimes(1);
+  });
+
+  act(() => {
+    expect(screen.getByTestId("loadingSpinner")).toBeInTheDocument();
+  });
+});
+
+it("displays jobs when search button is clicked", async () => {
+  render(
+    <SearchContextController>
+      <JobListingContextController>
+        <SearchPage />
+      </JobListingContextController>
+    </SearchContextController>
+  );
+  const mock = jest.spyOn(data, "fetchJobs").mockResolvedValueOnce(fakeData);
+
+  const findJobsButton = screen.getByTestId("findJobsButton");
+
+  act(() => {
     fireEvent.click(findJobsButton);
 
     expect(mock).toHaveBeenCalledTimes(1);
   });
 
-  // const jobListingCard = screen.findByTestId("loadingSpinner");
-
-  expect(
-    await screen.findByTestId("loadingSpinner", {}, { timeout: 3000 })
-  ).toBeInTheDocument();
+  expect(await screen.findByTestId("jobListingCard")).toBeInTheDocument();
 });
 
-// it("displays jobs when search button is clicked", async () => {
-//   render(
-//     <SearchContextController>
-//       <JobListingContextController>
-//         <SearchPage />
-//       </JobListingContextController>
-//     </SearchContextController>
-//   );
-//   const mock = jest.spyOn(data, "fetchJobs4").mockResolvedValueOnce(fakeData);
+it("displays job details when clicking on job listing card", async () => {
+  render(
+    <SearchContextController>
+      <JobListingContextController>
+        <SearchPage />
+      </JobListingContextController>
+    </SearchContextController>
+  );
+  const mock = jest.spyOn(data, "fetchJobs").mockResolvedValueOnce(fakeData);
 
-//   const findJobsButton = screen.getByTestId("findJobsButton");
+  const findJobsButton = screen.getByTestId("findJobsButton");
 
-//   act(() => {
-//     fireEvent.click(findJobsButton);
+  act(() => {
+    fireEvent.click(findJobsButton);
 
-//     expect(mock).toHaveBeenCalledTimes(1);
-//   });
+    expect(mock).toHaveBeenCalledTimes(1);
+  });
+  const jobListingCard = await screen.findByTestId("jobListingCardWrapper");
+  // const jobListingCard = await screen.findByTestId("jobListingCard");
+  act(() => {
+    fireEvent.click(jobListingCard);
+  });
+  expect(await screen.findByTestId("jobListingDetails")).toBeInTheDocument();
+});
 
-//   expect(await screen.findByTestId("jobListingCard")).toBeInTheDocument();
-// });
+it("display a message when no jobs", async () => {
+  render(
+    <SearchContextController>
+      <JobListingContextController>
+        <SearchPage />
+      </JobListingContextController>
+    </SearchContextController>
+  );
+  const mock = jest
+    .spyOn(data, "fetchJobs")
+    .mockResolvedValueOnce(emptyJobsMockData);
 
-// it("displays job details when clicking on job listing card", async () => {
-//   render(
-//     <SearchContextController>
-//       <JobListingContextController>
-//         <SearchPage />
-//       </JobListingContextController>
-//     </SearchContextController>
-//   );
-//   const mock = jest.spyOn(data, "fetchJobs4").mockResolvedValueOnce(fakeData);
+  const findJobsButton = screen.getByTestId("findJobsButton");
 
-//   const findJobsButton = screen.getByTestId("findJobsButton");
+  act(() => {
+    fireEvent.click(findJobsButton);
 
-//   act(() => {
-//     fireEvent.click(findJobsButton);
+    expect(mock).toHaveBeenCalledTimes(1);
+  });
 
-//     expect(mock).toHaveBeenCalledTimes(1);
-//   });
-//   const jobListingCard = await screen.findByTestId("jobListingCardWrapper");
-//   // const jobListingCard = await screen.findByTestId("jobListingCard");
-//   act(() => {
-//     fireEvent.click(jobListingCard);
-//   });
-//   expect(await screen.findByTestId("jobListingDetails")).toBeInTheDocument();
-// });
+  expect(await screen.findByText(/no jobs found/i)).toBeInTheDocument();
+});
 
-// it("display a message when no jobs", async () => {
-//   render(
-//     <SearchContextController>
-//       <JobListingContextController>
-//         <SearchPage />
-//       </JobListingContextController>
-//     </SearchContextController>
-//   );
-//   const mock = jest
-//     .spyOn(data, "fetchJobs4")
-//     .mockResolvedValueOnce(emptyJobsMockData);
+it("display an error message", async () => {
+  render(
+    <SearchContextController>
+      <JobListingContextController>
+        <SearchPage />
+      </JobListingContextController>
+    </SearchContextController>
+  );
+  const mock = jest.spyOn(data, "fetchJobs").mockImplementation(() => {
+    throw new Error();
+  });
 
-//   const findJobsButton = screen.getByTestId("findJobsButton");
+  const findJobsButton = screen.getByTestId("findJobsButton");
 
-//   act(() => {
-//     fireEvent.click(findJobsButton);
+  act(() => {
+    fireEvent.click(findJobsButton);
 
-//     expect(mock).toHaveBeenCalledTimes(1);
-//   });
+    expect(mock).toHaveBeenCalledTimes(1);
+  });
 
-//   expect(await screen.findByText(/no jobs found/i)).toBeInTheDocument();
-// });
-
-// it("display an error message", async () => {
-//   render(
-//     <SearchContextController>
-//       <JobListingContextController>
-//         <SearchPage />
-//       </JobListingContextController>
-//     </SearchContextController>
-//   );
-//   const mock = jest.spyOn(data, "fetchJobs4").mockImplementation(() => {
-//     throw new Error();
-//   });
-
-//   const findJobsButton = screen.getByTestId("findJobsButton");
-
-//   act(() => {
-//     fireEvent.click(findJobsButton);
-
-//     expect(mock).toHaveBeenCalledTimes(1);
-//   });
-
-//   expect(
-//     await screen.findByText(/Oops, something went wrong/i)
-//   ).toBeInTheDocument();
-// });
+  expect(
+    await screen.findByText(/Oops, something went wrong/i)
+  ).toBeInTheDocument();
+});

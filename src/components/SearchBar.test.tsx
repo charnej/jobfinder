@@ -103,7 +103,7 @@ describe("renders inputs", () => {
 describe("find jobs button", () => {
   it("clicks the search button and calls FetchJobs once", () => {
     render(<SearchBar />);
-    const mock = jest.spyOn(data, "fetchJobs4").mockResolvedValue(fakeData);
+    const mock = jest.spyOn(data, "fetchJobs").mockResolvedValue(fakeData);
 
     const findJobsButton = screen.getByTestId("findJobsButton");
 

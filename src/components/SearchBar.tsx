@@ -11,7 +11,7 @@ import {
 import logo from "../assets/JobFinder.png";
 import { useSearchContext } from "../contexts/SearchContext";
 import { useJobListingContext } from "../contexts/JobListingContext";
-import { fetchJobs3, fetchJobs4 } from "../helpers/FetchJobs";
+import { fetchJobs } from "../helpers/FetchJobs";
 
 const timePostedOptions = [
   {
@@ -90,47 +90,6 @@ export default function SearchBar() {
 
   const { setSelectedJobListing } = useJobListingContext();
 
-  const apiKey = "mthpyw9ea7zyswfuj3zur6bt55fce7qf";
-
-  // const fetchJobs = React.useCallback(() => {
-  //   setIsLoading(true);
-  //   setError(false);
-  //   fetch(
-  //     `https://api.ziprecruiter.com/jobs/v1?search=${searchTerm}&location=${location}&radius_miles=${radius}&days_ago=${timePosted}&jobs_per_page=10&page=${currentPage}&api_key=${apiKey}`
-  //   )
-  //     .then((res) => res.json())
-  //     .then(
-  //       (result) => {
-  //         setIsLoading(false);
-  //         setJobListings(result);
-  //       },
-  //       (error) => {
-  //         console.log("error");
-  //         setIsLoading(false);
-  //         setError(error);
-  //       }
-  //     );
-  // }, [searchTerm, location, radius, timePosted]);
-
-  // React.useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await fetchJobs4(
-  //         searchTerm,
-  //         location,
-  //         radius,
-  //         timePosted,
-  //         currentPage,
-  //         apiKey
-  //       );
-  //       console.log(response);
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   }
-  //   fetchData();
-  // }, [searchTerm, location, radius, timePosted, currentPage, apiKey]);
-
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: "white" }}>
@@ -187,26 +146,15 @@ export default function SearchBar() {
                     onClick={async () => {
                       setSelectedJobListing(null);
                       setCurrentPage(1);
-                      // fetchJobs3(
-                      //   searchTerm,
-                      //   location,
-                      //   radius,
-                      //   timePosted,
-                      //   currentPage,
-                      //   apiKey,
-                      //   setIsLoading,
-                      //   setError,
-                      //   setJobListings
-                      // );
+
                       setIsLoading(true);
                       try {
-                        const response = await fetchJobs4(
+                        const response = await fetchJobs(
                           searchTerm,
                           location,
                           radius,
                           timePosted,
-                          currentPage,
-                          apiKey
+                          currentPage
                         );
                         if (response) {
                           setJobListings(response);
@@ -253,29 +201,15 @@ export default function SearchBar() {
                 }}
                 onChange={async (e) => {
                   setTimePosted(parseInt(e.target.value));
-                  // fetchJobs();
                   setCurrentPage(1);
-                  // fetchJobs3(
-                  //   searchTerm,
-                  //   location,
-                  //   radius,
-                  //   parseInt(e.target.value),
-                  //   currentPage,
-                  //   apiKey,
-                  //   setIsLoading,
-                  //   setError,
-                  //   setJobListings
-                  // );
-                  // fetchJobs2();
                   setIsLoading(true);
                   try {
-                    const response = await fetchJobs4(
+                    const response = await fetchJobs(
                       searchTerm,
                       location,
                       radius,
-                      timePosted,
-                      currentPage,
-                      apiKey
+                      parseInt(e.target.value),
+                      currentPage
                     );
                     if (response) {
                       setJobListings(response);
@@ -310,22 +244,27 @@ export default function SearchBar() {
                 inputProps={{
                   id: "radiusSelectInput",
                 }}
-                onChange={(e) => {
+                onChange={async (e) => {
                   setRadius(parseInt(e.target.value));
                   setCurrentPage(1);
-                  fetchJobs3(
-                    searchTerm,
-                    location,
-                    parseInt(e.target.value),
-                    timePosted,
-                    currentPage,
-                    apiKey,
-                    setIsLoading,
-                    setError,
-                    setJobListings
-                  );
-                  // fetchJobs();
-                  // fetchJobs2();
+
+                  setIsLoading(true);
+                  try {
+                    const response = await fetchJobs(
+                      searchTerm,
+                      location,
+                      parseInt(e.target.value),
+                      timePosted,
+                      currentPage
+                    );
+                    if (response) {
+                      setJobListings(response);
+                    }
+                  } catch (error) {
+                    setError(true);
+                  } finally {
+                    setIsLoading(false);
+                  }
                 }}
                 defaultValue={5}
               >
@@ -338,15 +277,6 @@ export default function SearchBar() {
                 })}
               </TextField>
             </Grid>
-            {/* <Grid item xs={12} md={4}>
-              <TextField
-                placeholder="job type"
-                variant="standard"
-                InputProps={{
-                  disableUnderline: true,
-                }}
-              />
-            </Grid> */}
           </Grid>
         </Box>
       </Container>
