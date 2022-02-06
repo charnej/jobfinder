@@ -6,6 +6,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 JobFinder is a small React App that lets you search for jobs using the ZipRecruiter API.
 
+<br />
+<img src="images/JobFinderScreens.png" width="80%">
+
 ## Getting Started
 
 Before running the project, open FetchJobs.ts and replace the API key with a valid ZipRecruiter API key.
@@ -31,6 +34,3 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 In the project directory, run:
 
 ### `yarn test`
-
-<br />
-<img src="images/JobFinderScreens.png" width="80%">
