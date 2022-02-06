@@ -33,4 +33,4 @@ In the project directory, run:
 ### `yarn test`
 
 <br />
-<img src="images/JobFinderScreens.png" width="50%">
+<img src="images/JobFinderScreens.png" width="80%">
