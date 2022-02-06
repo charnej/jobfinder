@@ -60,7 +60,6 @@ theme = createTheme(theme, {
         input: {
           color: theme.palette.secondary.main,
           padding: 0,
-          // paddingLeft: 16,
           height: 54,
           borderColor: "#D9DEE5",
           borderWidth: 1,

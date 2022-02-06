@@ -1,4 +1,4 @@
-<img src="Images/JobFinder.png" width="50%">
+<img src="images/JobFinder.png" width="50%">
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -33,4 +33,4 @@ In the project directory, run:
 ### `yarn test`
 
 <br />
-<img src="Images/JobFinderScreens.png" width="50%">
+<img src="images/JobFinderScreens.png" width="50%">
