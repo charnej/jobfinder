@@ -1,32 +1,9 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { SearchContextController } from "../contexts/SearchContext";
-import SearchPage from "./Searchpage";
-import { emptyJobsMockData, fakeData } from "../helpers/mockedJobs";
+import SearchPage from "./SearchPage";
+import { emptyJobsMockData, mockedSearchResults } from "../helpers/helperData";
 import * as data from "./../helpers/FetchJobs";
 import { JobListingContextController } from "../contexts/JobListingContext";
-it("", () => {});
-it("displays loading spinner", (done) => {
-  render(
-    <SearchContextController>
-      <JobListingContextController>
-        <SearchPage />
-      </JobListingContextController>
-    </SearchContextController>
-  );
-
-  const findJobsButton = screen.getByTestId("findJobsButton");
-
-  act(() => {
-    const mock = jest.spyOn(data, "fetchJobs").mockResolvedValueOnce(fakeData);
-    fireEvent.click(findJobsButton);
-    done();
-    expect(mock).toHaveBeenCalledTimes(1);
-  });
-
-  act(() => {
-    expect(screen.getByTestId("loadingSpinner")).toBeInTheDocument();
-  });
-});
 
 it("displays jobs when search button is clicked", async () => {
   render(
@@ -36,7 +13,9 @@ it("displays jobs when search button is clicked", async () => {
       </JobListingContextController>
     </SearchContextController>
   );
-  const mock = jest.spyOn(data, "fetchJobs").mockResolvedValueOnce(fakeData);
+  const mock = jest
+    .spyOn(data, "fetchJobs")
+    .mockResolvedValueOnce(mockedSearchResults);
 
   const findJobsButton = screen.getByTestId("findJobsButton");
 
@@ -57,7 +36,9 @@ it("displays job details when clicking on job listing card", async () => {
       </JobListingContextController>
     </SearchContextController>
   );
-  const mock = jest.spyOn(data, "fetchJobs").mockResolvedValueOnce(fakeData);
+  const mock = jest
+    .spyOn(data, "fetchJobs")
+    .mockResolvedValueOnce(mockedSearchResults);
 
   const findJobsButton = screen.getByTestId("findJobsButton");
 
@@ -67,7 +48,7 @@ it("displays job details when clicking on job listing card", async () => {
     expect(mock).toHaveBeenCalledTimes(1);
   });
   const jobListingCard = await screen.findByTestId("jobListingCardWrapper");
-  // const jobListingCard = await screen.findByTestId("jobListingCard");
+
   act(() => {
     fireEvent.click(jobListingCard);
   });

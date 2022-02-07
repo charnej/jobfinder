@@ -1,8 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { JobListingType, SearchResultType } from "../contexts/SearchContext";
 import SearchBar from "./SearchBar";
 import * as data from "./../helpers/FetchJobs";
-import { fakeData } from "../helpers/mockedJobs";
+import { mockedSearchResults } from "../helpers/helperData";
 
 describe("renders inputs", () => {
   it("updates on change: search input", () => {
@@ -103,7 +102,9 @@ describe("renders inputs", () => {
 describe("find jobs button", () => {
   it("clicks the search button and calls FetchJobs once", () => {
     render(<SearchBar />);
-    const mock = jest.spyOn(data, "fetchJobs").mockResolvedValue(fakeData);
+    const mock = jest
+      .spyOn(data, "fetchJobs")
+      .mockResolvedValue(mockedSearchResults);
 
     const findJobsButton = screen.getByTestId("findJobsButton");
 

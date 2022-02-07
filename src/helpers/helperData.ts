@@ -34,7 +34,7 @@ export const jobs: JobListingType[] = [
   },
 ];
 
-export const fakeData: SearchResultType = {
+export const mockedSearchResults: SearchResultType = {
   num_paginable_jobs: 500,
   success: true,
   total_jobs: 123548,
@@ -47,3 +47,61 @@ export const emptyJobsMockData: SearchResultType = {
   total_jobs: 0,
   jobs: [],
 };
+
+export const timePostedOptions = [
+  {
+    value: 0,
+    name: "Posted anytime",
+  },
+  {
+    value: 1,
+    name: "Last 24 hours",
+  },
+  {
+    value: 3,
+    name: "Last 3 days",
+  },
+  {
+    value: 7,
+    name: "Last 7 days",
+  },
+  {
+    value: 14,
+    name: "Last 14 days",
+  },
+  {
+    value: 30,
+    name: "Last month",
+  },
+];
+
+export const radiusOptions = [
+  {
+    value: 5,
+    name: "Within 5 miles",
+  },
+  {
+    value: 10,
+    name: "Within 10 miles",
+  },
+  {
+    value: 15,
+    name: "Within 15 miles",
+  },
+  {
+    value: 20,
+    name: "Within 20 miles",
+  },
+  {
+    value: 25,
+    name: "Within 25 miles",
+  },
+  {
+    value: 50,
+    name: "Within 50 miles",
+  },
+  {
+    value: 100,
+    name: "Within 100 miles",
+  },
+];

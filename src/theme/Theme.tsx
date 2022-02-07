@@ -7,13 +7,13 @@ let theme: Theme = createTheme({
     primary: {
       main: "#2CCA9A",
       contrastText: "#11255D",
-      dark: "#f0f0f0", // hover color, 0b1941 with 6 points darker V in HSV
+      dark: "#f0f0f0",
     },
     // dark blue
     secondary: {
       main: "#11255D",
       contrastText: "#FFFFFF",
-      dark: "#0b1941", // hover color, 11255D with 6 points darker V in HSV
+      dark: "#0b1941",
     },
     divider: "#EBEBEB",
   },
@@ -51,6 +51,15 @@ theme = createTheme(theme, {
           borderRadius: 2,
           backgroundColor: theme.palette.divider,
           height: 20,
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            color: theme.palette.secondary.main,
+          },
         },
       },
     },

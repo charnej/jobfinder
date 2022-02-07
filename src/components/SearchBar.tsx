@@ -12,64 +12,7 @@ import logo from "../assets/JobFinder.png";
 import { useSearchContext } from "../contexts/SearchContext";
 import { useJobListingContext } from "../contexts/JobListingContext";
 import { fetchJobs } from "../helpers/FetchJobs";
-
-const timePostedOptions = [
-  {
-    value: 0,
-    name: "Posted anytime",
-  },
-  {
-    value: 1,
-    name: "Last 24 hours",
-  },
-  {
-    value: 3,
-    name: "Last 3 days",
-  },
-  {
-    value: 7,
-    name: "Last 7 days",
-  },
-  {
-    value: 14,
-    name: "Last 14 days",
-  },
-  {
-    value: 30,
-    name: "Last month",
-  },
-];
-
-const radiusOptions = [
-  {
-    value: 5,
-    name: "Within 5 miles",
-  },
-  {
-    value: 10,
-    name: "Within 10 miles",
-  },
-  {
-    value: 15,
-    name: "Within 15 miles",
-  },
-  {
-    value: 20,
-    name: "Within 20 miles",
-  },
-  {
-    value: 25,
-    name: "Within 25 miles",
-  },
-  {
-    value: 50,
-    name: "Within 50 miles",
-  },
-  {
-    value: 100,
-    name: "Within 100 miles",
-  },
-];
+import { radiusOptions, timePostedOptions } from "../helpers/helperData";
 
 export default function SearchBar() {
   const {
@@ -84,11 +27,46 @@ export default function SearchBar() {
     setTimePosted,
     setIsLoading,
     setError,
-    currentPage,
     setCurrentPage,
   } = useSearchContext();
 
   const { setSelectedJobListing } = useJobListingContext();
+  const isMobile = window.innerWidth >= 320 && window.innerWidth <= 480;
+
+  const getJobs = async (
+    searchTerm: string,
+    location: string,
+    radius: number,
+    timePosted: number,
+    currentPage: number
+  ) => {
+    setCurrentPage(1);
+
+    setIsLoading(true);
+    setError(false);
+    try {
+      const response = await fetchJobs(
+        searchTerm,
+        location,
+        radius,
+        timePosted,
+        currentPage
+      );
+      if (response) {
+        if (!response.success) {
+          setError(true);
+        }
+        if (response.jobs.length > 0 && !isMobile) {
+          setSelectedJobListing(response.jobs[0].id);
+        }
+        setJobListings(response);
+      }
+    } catch (error) {
+      setError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -102,7 +80,7 @@ export default function SearchBar() {
             <img
               src={logo}
               alt="job finder logo"
-              style={{ width: "100%", height: "auto" }}
+              style={{ width: isMobile ? "70%" : "100%", height: "auto" }}
             />
           </Grid>
           <Grid item xs={12} md={10} lg={10}>
@@ -142,28 +120,12 @@ export default function SearchBar() {
                   <Button
                     variant="contained"
                     data-testid="findJobsButton"
-                    sx={{ color: "common.white", textTransform: "capitalize" }}
+                    sx={{
+                      color: "common.white",
+                      textTransform: "capitalize",
+                    }}
                     onClick={async () => {
-                      setSelectedJobListing(null);
-                      setCurrentPage(1);
-
-                      setIsLoading(true);
-                      try {
-                        const response = await fetchJobs(
-                          searchTerm,
-                          location,
-                          radius,
-                          timePosted,
-                          currentPage
-                        );
-                        if (response) {
-                          setJobListings(response);
-                        }
-                      } catch (error) {
-                        setError(true);
-                      } finally {
-                        setIsLoading(false);
-                      }
+                      getJobs(searchTerm, location, radius, timePosted, 1);
                     }}
                   >
                     Find jobs
@@ -201,24 +163,13 @@ export default function SearchBar() {
                 }}
                 onChange={async (e) => {
                   setTimePosted(parseInt(e.target.value));
-                  setCurrentPage(1);
-                  setIsLoading(true);
-                  try {
-                    const response = await fetchJobs(
-                      searchTerm,
-                      location,
-                      radius,
-                      parseInt(e.target.value),
-                      currentPage
-                    );
-                    if (response) {
-                      setJobListings(response);
-                    }
-                  } catch (error) {
-                    setError(true);
-                  } finally {
-                    setIsLoading(false);
-                  }
+                  getJobs(
+                    searchTerm,
+                    location,
+                    radius,
+                    parseInt(e.target.value),
+                    1
+                  );
                 }}
                 defaultValue={0}
               >
@@ -246,25 +197,13 @@ export default function SearchBar() {
                 }}
                 onChange={async (e) => {
                   setRadius(parseInt(e.target.value));
-                  setCurrentPage(1);
-
-                  setIsLoading(true);
-                  try {
-                    const response = await fetchJobs(
-                      searchTerm,
-                      location,
-                      parseInt(e.target.value),
-                      timePosted,
-                      currentPage
-                    );
-                    if (response) {
-                      setJobListings(response);
-                    }
-                  } catch (error) {
-                    setError(true);
-                  } finally {
-                    setIsLoading(false);
-                  }
+                  getJobs(
+                    searchTerm,
+                    location,
+                    parseInt(e.target.value),
+                    timePosted,
+                    1
+                  );
                 }}
                 defaultValue={5}
               >

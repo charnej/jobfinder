@@ -7,7 +7,7 @@ export async function fetchJobs(
   timePosted: number,
   currentPage: number
 ): Promise<SearchResultType> {
-  const apiKey = "mthpyw9ea7zyswfuj3zur6bt55fce7qf";
+  const apiKey = "ENTER YOUR API KEY HERE";
   return (
     fetch(
       `https://api.ziprecruiter.com/jobs/v1?search=${searchTerm}&location=${location}&radius_miles=${radius}&days_ago=${timePosted}&jobs_per_page=10&page=${currentPage}&api_key=${apiKey}`

@@ -43,7 +43,10 @@ export default function JobListingDetails() {
         </Box>
         <Divider />
         <Box p={1}>
-          <Typography align="left">About this job</Typography>
+          <Typography align="left" fontWeight={600}>
+            About this job
+          </Typography>
+          <br />
           <Typography align="left">{parse(job?.snippet ?? "")}</Typography>
         </Box>
         <Box pt={2} display="flex">
